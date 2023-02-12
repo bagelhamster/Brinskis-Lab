@@ -1,23 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class FPSController : MonoBehaviour
 {
     public bool CanMove { get; private set; } = true;
-    public bool IsSprinting => canSprint&&Input.GetButton("Sprint");
+    private bool IsSprinting => Input.GetButton("Sprint");
+    private bool CanJump => Input.GetButtonDown("Jump")&&characterController.isGrounded;
     //move
     [SerializeField] private float walkSpeed = 3.0f;
 
-    [SerializeField] private bool canSprint=true;
     [SerializeField] private float sprintSpeed = 4.5f;
 
-    [SerializeField] private float gravity = 30.0f;
+
     //look
     [SerializeField, Range(1, 10)] private float XlookSpeed = 2.0f;
     [SerializeField, Range(1, 10)] private float ylookSpeed = 2.0f;
     [SerializeField, Range(1, 180)] private float upperLookLimit = 80.0f;
     [SerializeField, Range(1, 180)] private float lowerLookLimit = 80.0f;
+
+    [SerializeField] private float jumpStrength = 9.0f;
+
+    [SerializeField] private float gravity = 30.0f;
 
     private Camera cam;
     private CharacterController characterController;
@@ -45,6 +51,7 @@ public class FPSController : MonoBehaviour
             MoveInput();
             MouseLook();
             FinalMove();
+            Jump();
         }
     }
     private void MoveInput()
@@ -55,6 +62,11 @@ public class FPSController : MonoBehaviour
         moveDirection=(transform.TransformDirection(Vector3.forward)*cInput.x)+(transform.TransformDirection(Vector3.right)*cInput.y);
         moveDirection.y = moveDirectionY;
 
+    }
+    private void Jump()
+    {
+        if (CanJump)
+            moveDirection.y = jumpStrength;
     }
     private void MouseLook()
     {
