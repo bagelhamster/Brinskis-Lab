@@ -9,12 +9,21 @@ public class FPSController : MonoBehaviour
     public bool CanMove { get; private set; } = true;
     private bool IsSprinting => Input.GetButton("Sprint");
     private bool CanJump => Input.GetButtonDown("Jump")&&characterController.isGrounded;
+    private bool CanCrouch=>Input.GetButtonDown("Crouch")&&!duringanimation&&characterController.isGrounded;
     //move
     [SerializeField] private float walkSpeed = 3.0f;
-
+    [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float sprintSpeed = 4.5f;
-
-
+    [SerializeField] private float slopeSpeed = 9f;
+    //crouch
+    [SerializeField] private float crouchH = 0.5f;
+    [SerializeField] private float standingH = 2f;
+    [SerializeField] private float timeToCrouch = 0.25f;
+    [SerializeField] private Vector3 centercrouch = new Vector3(0,0.5f,0);
+    [SerializeField] private Vector3 standcenter=new Vector3(0,0,0);
+    private bool isCrouching;
+    private bool duringanimation;
+    
     //look
     [SerializeField, Range(1, 10)] private float XlookSpeed = 2.0f;
     [SerializeField, Range(1, 10)] private float ylookSpeed = 2.0f;
@@ -24,6 +33,33 @@ public class FPSController : MonoBehaviour
     [SerializeField] private float jumpStrength = 9.0f;
 
     [SerializeField] private float gravity = 30.0f;
+
+    //bob
+    [SerializeField] private float walkbob = 14f;
+    [SerializeField] private float walkbobamount = 0.04f;
+    [SerializeField] private float sprintbob = 18f;
+    [SerializeField] private float sprintbobamount = 0.1f;
+    [SerializeField] private float crouchbob = 8f;
+    [SerializeField] private float crouchbobamount = 0.01f;
+    private float defaulty = 0;
+    private float timer;
+
+    private Vector3 hitPoint;
+    private bool IsSliding
+    {
+        get
+        {
+            if(characterController.isGrounded&&Physics.Raycast(transform.position,Vector3.down,out RaycastHit slopeHit, 2f))
+            {
+                hitPoint = slopeHit.normal;
+                return Vector3.Angle(hitPoint, Vector3.up) > characterController.slopeLimit;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
     private Camera cam;
     private CharacterController characterController;
@@ -41,6 +77,7 @@ public class FPSController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        defaulty = cam.transform.localPosition.y;
     }
 
     // Update is called once per frame
@@ -52,11 +89,13 @@ public class FPSController : MonoBehaviour
             MouseLook();
             FinalMove();
             Jump();
+            Crouch();
+            HeadBob();
         }
     }
     private void MoveInput()
     {
-        cInput = new Vector2((IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
+        cInput = new Vector2((isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
 
         float moveDirectionY=moveDirection.y;
         moveDirection=(transform.TransformDirection(Vector3.forward)*cInput.x)+(transform.TransformDirection(Vector3.right)*cInput.y);
@@ -67,6 +106,21 @@ public class FPSController : MonoBehaviour
     {
         if (CanJump)
             moveDirection.y = jumpStrength;
+    }
+    private void HeadBob()
+    {
+        if (!characterController.isGrounded) return;
+
+        if (Mathf.Abs(moveDirection.x) > 0.1 || Mathf.Abs(moveDirection.z) > 0.1)
+        {
+            timer += Time.deltaTime * (isCrouching ? crouchbob : IsSprinting ? sprintbob : walkbob);
+            cam.transform.localPosition=new Vector3(cam.transform.localPosition.x,defaulty+Mathf.Sin(timer)*(isCrouching?crouchbobamount:IsSprinting?sprintbobamount:walkbobamount),cam.transform.localPosition.z);
+        }
+    }
+    private void Crouch()
+    {
+        if (CanCrouch)
+            StartCoroutine(CrouchStand());
     }
     private void MouseLook()
     {
@@ -79,6 +133,33 @@ public class FPSController : MonoBehaviour
     {
         if(!characterController.isGrounded)
             moveDirection.y-=gravity*Time.deltaTime;
+        if (IsSliding)
+            moveDirection += new Vector3(hitPoint.x, -hitPoint.y, hitPoint.z) * slopeSpeed;
         characterController.Move(moveDirection*Time.deltaTime);
+    }
+    private IEnumerator CrouchStand()
+    {
+        if (isCrouching && Physics.Raycast(cam.transform.position, Vector3.up, 1f))
+        yield break;
+
+        duringanimation = true;
+        float timeElapsed = 0;
+        float targetHeight=isCrouching ? standingH:crouchH;
+        float currentHeight = characterController.height;
+        Vector3 targetCenter = isCrouching ? standcenter : centercrouch;
+        Vector3 currentCenter = characterController.center;
+        while(timeElapsed<timeToCrouch)
+        {
+            characterController.height = Mathf.Lerp(currentHeight, targetHeight, timeElapsed / timeToCrouch);
+            characterController.center = Vector3.Lerp(currentCenter, targetCenter, timeElapsed / timeToCrouch);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        characterController.height = targetHeight;
+        characterController.center = targetCenter;
+        isCrouching = !isCrouching;
+
+        duringanimation = false;
     }
 }
