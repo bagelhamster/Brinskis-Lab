@@ -294,7 +294,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27998
+  m_Name: pb_Mesh28034
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -2683,7 +2683,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27984
+  m_Name: pb_Mesh27986
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -2848,7 +2848,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28026
+  m_Name: pb_Mesh28080
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -3058,10 +3058,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f026f56c5db5fa46b2ed8da78536a37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallrunning: 0
   walkSpeed: 3
   crouchSpeed: 1.5
   sprintSpeed: 5
   slopeSpeed: 9
+  WallRunSpeed: 7
   crouchH: 0.5
   standingH: 2
   timeToCrouch: 0.25
@@ -3517,7 +3519,7 @@ GameObject:
   - component: {fileID: 1530438309}
   - component: {fileID: 1530438308}
   - component: {fileID: 1530438307}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3924,7 +3926,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27970
+  m_Name: pb_Mesh27972
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2

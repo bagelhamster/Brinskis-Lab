@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public class FPSController : MonoBehaviour
 {
     public bool CanMove { get; private set; } = true;
+    public bool wallrunning;
     private bool IsSprinting => Input.GetButton("Sprint");
     private bool CanJump => Input.GetButtonDown("Jump")&&characterController.isGrounded;
     private bool CanCrouch=>Input.GetButtonDown("Crouch")&&!duringanimation&&characterController.isGrounded;
@@ -15,6 +16,7 @@ public class FPSController : MonoBehaviour
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float sprintSpeed = 4.5f;
     [SerializeField] private float slopeSpeed = 9f;
+    [SerializeField] private float WallRunSpeed = 7f;
     //crouch
     [SerializeField] private float crouchH = 0.5f;
     [SerializeField] private float standingH = 2f;
@@ -70,6 +72,7 @@ public class FPSController : MonoBehaviour
     private float rotationX;
 
 
+    //private Rigidbody rb;
 
     void Awake()
     {
@@ -78,6 +81,7 @@ public class FPSController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         defaulty = cam.transform.localPosition.y;
+        //rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -95,7 +99,7 @@ public class FPSController : MonoBehaviour
     }
     private void MoveInput()
     {
-        cInput = new Vector2((isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
+        cInput = new Vector2((wallrunning?WallRunSpeed:isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (wallrunning ? WallRunSpeed:isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
 
         float moveDirectionY=moveDirection.y;
         moveDirection=(transform.TransformDirection(Vector3.forward)*cInput.x)+(transform.TransformDirection(Vector3.right)*cInput.y);
@@ -136,6 +140,7 @@ public class FPSController : MonoBehaviour
         if (IsSliding)
             moveDirection += new Vector3(hitPoint.x, -hitPoint.y, hitPoint.z) * slopeSpeed;
         characterController.Move(moveDirection*Time.deltaTime);
+
     }
     private IEnumerator CrouchStand()
     {
