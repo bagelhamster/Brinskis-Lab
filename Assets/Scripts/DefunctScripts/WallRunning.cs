@@ -48,21 +48,11 @@ public class WallRunning : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if ((LeftWall || RightWall) && verticalInput > 0 && AboveGround())
-        {
-            if(!pm.wallrunning)
-                WallRunStart();
-        }
-        else
-        {
-            if(pm.wallrunning)
-                StopWallRun();
-        }
 
     }
     private void WallRunStart()
     {
-        pm.wallrunning = true;
+        
     }
     private void WallRunnin()
     {
@@ -82,7 +72,6 @@ public class WallRunning : MonoBehaviour
     }
     private void StopWallRun()
     {
-        pm.wallrunning = false;
     }
 
 }

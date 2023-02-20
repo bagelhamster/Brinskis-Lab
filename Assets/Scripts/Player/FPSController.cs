@@ -7,12 +7,11 @@ using UnityEngine.Rendering;
 public class FPSController : MonoBehaviour
 {
     public bool CanMove { get; private set; } = true;
-    public bool wallrunning;
     private bool IsSprinting => Input.GetButton("Sprint");
     private bool CanJump => Input.GetButtonDown("Jump")&&characterController.isGrounded;
     private bool CanCrouch=>Input.GetButtonDown("Crouch")&&!duringanimation&&characterController.isGrounded;
     //move
-    [SerializeField] private float walkSpeed = 3.0f;
+    [SerializeField] private float walkSpeed = 3.0f;    [SerializeField] private float walkSpeed2 = 3.0f;
     [SerializeField] private float crouchSpeed = 1.5f;
     [SerializeField] private float sprintSpeed = 4.5f;
     [SerializeField] private float slopeSpeed = 9f;
@@ -35,6 +34,7 @@ public class FPSController : MonoBehaviour
     [SerializeField] private float jumpStrength = 9.0f;
 
     [SerializeField] private float gravity = 30.0f;
+    [SerializeField] private float gravity2 = 30.0f;    [SerializeField] private float gravity3 = 5.0f;
 
     //bob
     [SerializeField] private float walkbob = 14f;
@@ -97,9 +97,27 @@ public class FPSController : MonoBehaviour
             HeadBob();
         }
     }
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+
+
+        if (hit.gameObject.tag == ("Wall"))
+        {
+            gravity = gravity3;
+            walkSpeed = WallRunSpeed;
+
+
+        }
+        else
+        {
+            gravity = gravity2;
+            walkSpeed = walkSpeed2;
+
+        }
+    }
     private void MoveInput()
     {
-        cInput = new Vector2((wallrunning?WallRunSpeed:isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (wallrunning ? WallRunSpeed:isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
+        cInput = new Vector2((isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
 
         float moveDirectionY=moveDirection.y;
         moveDirection=(transform.TransformDirection(Vector3.forward)*cInput.x)+(transform.TransformDirection(Vector3.right)*cInput.y);
