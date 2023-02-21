@@ -45,7 +45,8 @@ public class FPSController : MonoBehaviour
     [SerializeField] private float crouchbobamount = 0.01f;
     private float defaulty = 0;
     private float timer;
-
+    List<Collider> collidedObjects = new List<Collider>();
+    private int collided;
     private Vector3 hitPoint;
     private bool IsSliding
     {
@@ -72,7 +73,6 @@ public class FPSController : MonoBehaviour
     private float rotationX;
 
 
-    //private Rigidbody rb;
 
     void Awake()
     {
@@ -81,10 +81,9 @@ public class FPSController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         defaulty = cam.transform.localPosition.y;
-        //rb = GetComponent<Rigidbody>();
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (CanMove)
@@ -95,17 +94,23 @@ public class FPSController : MonoBehaviour
             Jump();
             Crouch();
             HeadBob();
+            touching();
         }
     }
+    private void FixedUpdate()
+    {
+        collidedObjects.Clear();
+    }
+    
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-
+        collidedObjects.Add(hit.collider);
 
         if (hit.gameObject.tag == ("Wall"))
         {
             gravity = gravity3;
             walkSpeed = WallRunSpeed;
-
+            
 
         }
         else
@@ -115,6 +120,7 @@ public class FPSController : MonoBehaviour
 
         }
     }
+
     private void MoveInput()
     {
         cInput = new Vector2((isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
@@ -159,6 +165,18 @@ public class FPSController : MonoBehaviour
             moveDirection += new Vector3(hitPoint.x, -hitPoint.y, hitPoint.z) * slopeSpeed;
         characterController.Move(moveDirection*Time.deltaTime);
 
+    }
+    private void touching()
+    {
+        collided=collidedObjects.Count;
+        if(collided==0&&gravity!=gravity2)
+        {
+            gravity = gravity2;
+            walkSpeed = walkSpeed2;
+        }
+        //Debug.Log(collided);
+
+        
     }
     private IEnumerator CrouchStand()
     {
