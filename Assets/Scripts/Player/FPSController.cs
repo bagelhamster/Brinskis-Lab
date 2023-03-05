@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies;
 using UnityEngine;
 using UnityEngine.Rendering;
+using System;
 
 public class FPSController : MonoBehaviour
 {
     public bool CanMove { get; private set; } = true;
-    private bool IsSprinting => Input.GetButton("Sprint");
+    [SerializeField] private bool canSprint=true;
+    private bool IsSprinting =>canSprint&& Input.GetButton("Sprint");
     private bool CanJump => Input.GetButtonDown("Jump")&&characterController.isGrounded;
     private bool CanCrouch=>Input.GetButtonDown("Crouch")&&!duringanimation&&characterController.isGrounded;
     //move
@@ -24,7 +26,27 @@ public class FPSController : MonoBehaviour
     [SerializeField] private Vector3 standcenter=new Vector3(0,0,0);
     private bool isCrouching;
     private bool duringanimation;
-    
+
+    [SerializeField] private float maxHealth = 100;
+    [SerializeField] private float timeBeforeRegen = 5;
+    [SerializeField] private float healthIncre = 1;
+    [SerializeField] private float healthTimeIncre = 0.1f;
+    private float currentHealth;
+    private Coroutine regenHealth;
+    public static Action<float> OnTakeDamage;
+    public static Action<float> OnDamage;
+    public static Action<float> OnHeal;
+
+    [SerializeField] private float maxStamina = 100;
+    [SerializeField] private float staminaUse = 5;
+    [SerializeField] private float timeBeforeStamRegen = 5;
+    [SerializeField] private float staminaIncre = 2;
+    [SerializeField] private float staminaTimeIncre = 0.1f;
+    private float currentStamina;
+    private Coroutine regenStamina;
+    public static Action<float> OnStaminaChange;
+
+
     //look
     [SerializeField, Range(1, 10)] private float XlookSpeed = 2.0f;
     [SerializeField, Range(1, 10)] private float ylookSpeed = 2.0f;
@@ -71,7 +93,15 @@ public class FPSController : MonoBehaviour
     private Vector2 cInput;
 
     private float rotationX;
+    private void OnEnable()
+    {
+        OnTakeDamage += Damage;
+    }
+    private void OnDisable()
+    {
+        OnTakeDamage -= Damage;
 
+    }
 
 
     void Awake()
@@ -81,6 +111,8 @@ public class FPSController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         defaulty = cam.transform.localPosition.y;
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
 
     }
 
@@ -95,6 +127,7 @@ public class FPSController : MonoBehaviour
             Crouch();
             HeadBob();
             touching();
+            Stamina();
         }
     }
     private void FixedUpdate()
@@ -120,7 +153,79 @@ public class FPSController : MonoBehaviour
 
         }
     }
+    private void Damage(float damage)
+    {
+        currentHealth-=damage;
+        OnDamage?.Invoke(currentHealth);
+         if (currentHealth <= 0)
+        {
+            Kill();
+        }else if (regenHealth!=null)
+        {
+            StopCoroutine(regenHealth);
 
+            regenHealth = StartCoroutine(RegenHealth());
+        }
+    }
+    private void Kill()
+    {
+        currentHealth = 0;
+        if (regenHealth != null)
+            StopCoroutine(regenHealth);
+        //Do things if dead
+    }
+    private IEnumerator RegenHealth()
+    {
+        yield return new WaitForSeconds(timeBeforeRegen);
+        WaitForSeconds timetoWait = new WaitForSeconds(healthTimeIncre);
+        while (currentHealth < maxHealth)
+        {
+            currentHealth += healthTimeIncre;
+            if(currentHealth>maxHealth)
+                currentHealth=maxHealth;
+            OnHeal?.Invoke(currentHealth);
+
+            yield return timetoWait;
+        }
+        regenHealth = null;
+    }
+    private void Stamina()
+    {
+        if (IsSprinting && cInput != Vector2.zero)
+        {
+            if (regenStamina != null)
+            {
+                StopCoroutine(regenStamina);
+                regenStamina = null;
+            }
+            currentStamina-=staminaUse*Time.deltaTime;
+            if (currentStamina < 0)
+            {
+                currentStamina=0;
+
+            }
+            OnStaminaChange?.Invoke(currentStamina);
+            if (currentStamina <= 0) canSprint = false;
+        }
+        if (!IsSprinting && currentStamina < maxStamina && regenStamina == null)
+        {
+            regenStamina = StartCoroutine(RegenStamina());
+        }
+    }
+    private IEnumerator RegenStamina()
+    {
+        yield return new WaitForSeconds(timeBeforeStamRegen);
+        WaitForSeconds timetowait=new WaitForSeconds(staminaTimeIncre);
+        while(currentStamina < maxStamina)
+        {
+            if (currentStamina>0)canSprint=true;
+            currentStamina+=staminaIncre;
+            if (currentStamina>maxStamina)currentStamina = maxStamina;
+            OnStaminaChange?.Invoke(currentStamina);
+            yield return timetowait;
+        }
+        regenStamina = null;
+    }
     private void MoveInput()
     {
         cInput = new Vector2((isCrouching?crouchSpeed:IsSprinting?sprintSpeed: walkSpeed) * Input.GetAxis("Vertical"), (isCrouching ? crouchSpeed : IsSprinting ? sprintSpeed : walkSpeed) * Input.GetAxis("Horizontal"));
