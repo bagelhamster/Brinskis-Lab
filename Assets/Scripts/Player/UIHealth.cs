@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class UIHealth : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI Health = default;
     [SerializeField] private TextMeshProUGUI Stamina = default;
+
 
 
     private void OnEnable()
@@ -23,6 +25,7 @@ public class UIHealth : MonoBehaviour
         FPSController.OnStaminaChange -= UpdateStamina;
 
     }
+
     private void Start()
     {
         UpdateHealth(100);

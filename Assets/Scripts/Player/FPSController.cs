@@ -31,7 +31,7 @@ public class FPSController : MonoBehaviour
     [SerializeField] private float timeBeforeRegen = 5;
     [SerializeField] private float healthIncre = 1;
     [SerializeField] private float healthTimeIncre = 0.1f;
-    private float currentHealth;
+    public float currentHealth;
     private Coroutine regenHealth;
     public static Action<float> OnTakeDamage;
     public static Action<float> OnDamage;
@@ -70,6 +70,12 @@ public class FPSController : MonoBehaviour
     List<Collider> collidedObjects = new List<Collider>();
     private int collided;
     private Vector3 hitPoint;
+
+
+    [SerializeField] private GameObject blood1;
+    [SerializeField] private GameObject blood2;
+    [SerializeField] private GameObject blood3;
+    [SerializeField] private GameObject blood4;
     private bool IsSliding
     {
         get
@@ -102,7 +108,48 @@ public class FPSController : MonoBehaviour
         OnTakeDamage -= Damage;
 
     }
+    private void ScreenBlood()
+    {
+        if ( currentHealth<= maxHealth)
+        {
+            blood1.gameObject.SetActive(false);
+            blood2.gameObject.SetActive(false);
+            blood3.gameObject.SetActive(false);
+            blood4.gameObject.SetActive(false);
 
+
+        }
+        if (currentHealth <=0.7* maxHealth)
+        {
+            blood1.gameObject.SetActive(true);
+            blood2.gameObject.SetActive(false);
+            blood3.gameObject.SetActive(false);
+            blood4.gameObject.SetActive(false);
+        }
+        if (currentHealth <= 0.4 * maxHealth)
+        {
+            blood1.gameObject.SetActive(true);
+            blood2.gameObject.SetActive(true);
+            blood3.gameObject.SetActive(false);
+            blood4.gameObject.SetActive(false);
+        }
+        if (currentHealth <= 0.3 * maxHealth)
+        {
+            blood1.gameObject.SetActive(true);
+            blood2.gameObject.SetActive(true);
+            blood3.gameObject.SetActive(true);
+            blood4.gameObject.SetActive(false);
+        }
+        if (currentHealth <= 0.15 * maxHealth)
+        {
+            blood1.gameObject.SetActive(true);
+            blood2.gameObject.SetActive(true);
+            blood3.gameObject.SetActive(true);
+            blood4.gameObject.SetActive(true);
+        }
+
+
+    }
 
     void Awake()
     {
@@ -128,6 +175,7 @@ public class FPSController : MonoBehaviour
             HeadBob();
             touching();
             Stamina();
+            ScreenBlood();
         }
     }
     private void FixedUpdate()

@@ -45,6 +45,8 @@ public class GunScript : MonoBehaviour
             Shoot();
         }
     }
+
+
     private void Reload()
     {
         reloading = true;
