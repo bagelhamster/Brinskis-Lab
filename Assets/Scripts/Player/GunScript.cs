@@ -29,7 +29,7 @@ public class GunScript : MonoBehaviour
     private void Update()
     {
         MyInput();
-        text.SetText(bulletsLeft + " / " + magSize);
+        text.SetText(bulletsLeft/bulletsPerShot + " / " + magSize/bulletsPerShot);
 
     }
     private void MyInput()
@@ -64,7 +64,7 @@ public class GunScript : MonoBehaviour
         Vector3 direction = cam.transform.forward + new Vector3(spreadx, spready, 0);
 
 
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out rayHit, range))
+        if (Physics.Raycast(cam.transform.position, direction, out rayHit, range))
         {
             if (rayHit.collider.CompareTag("Enemy"))
             {
