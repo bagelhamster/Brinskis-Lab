@@ -64,17 +64,20 @@ public class GunScript : MonoBehaviour
         Vector3 direction = cam.transform.forward + new Vector3(spreadx, spready, 0);
 
 
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out rayHit, range, whatIsEnemy))
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out rayHit, range))
         {
             if (rayHit.collider.CompareTag("Enemy"))
             {
                 //Make the enemy take damage of some kind
                 Debug.Log(rayHit.transform.name);
+               //Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
 
             }
+                    Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
+
         }
         //Adds bullet holes if wanted not sure yet
-        //Instantiate(bulletHoleGraphic,rayHit.point,Quaternion.Euler(0,180,0));
+        //Destroy(BulletHole,2f);
         Instantiate(muzzleFlash, attackPoint.position,attackPoint.rotation,attackPoint.parent);
         //muzzleFlash.transform.parent = attackPoint.transform;
         bulletsLeft--;
