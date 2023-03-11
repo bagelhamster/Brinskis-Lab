@@ -19,8 +19,9 @@ public class GunScript : MonoBehaviour
     public GameObject bulletHoleGraphic;
 
     public TextMeshProUGUI text;
-
-
+    [SerializeField] private AudioSource Gun = default;
+    [SerializeField] private AudioClip[] clips = default;
+    [SerializeField] private AudioClip[] reload = default;
     private void Awake()
     {
         bulletsLeft=magSize;
@@ -50,7 +51,10 @@ public class GunScript : MonoBehaviour
     private void Reload()
     {
         reloading = true;
+
         Invoke("ReloadDone", reloadTime);
+        Gun.PlayOneShot(reload[UnityEngine.Random.Range(0, clips.Length - 1)]);
+
     }
     private void ReloadDone()
     {
@@ -76,12 +80,14 @@ public class GunScript : MonoBehaviour
 
             }
                     Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
+                    Gun.PlayOneShot(clips[UnityEngine.Random.Range(0, clips.Length - 1)]);
 
         }
         //Adds bullet holes if wanted not sure yet
         //Destroy(BulletHole,2f);
         Instantiate(muzzleFlash, attackPoint.position,attackPoint.rotation,attackPoint.parent);
         //muzzleFlash.transform.parent = attackPoint.transform;
+
         bulletsLeft--;
         bulletsShot--;
         Invoke("ResetShot", shotGap);

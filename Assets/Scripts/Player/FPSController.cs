@@ -4,6 +4,7 @@ using Unity.VisualScripting.Dependencies;
 using UnityEngine;
 using UnityEngine.Rendering;
 using System;
+using Unity.VisualScripting;
 
 public class FPSController : MonoBehaviour
 {
@@ -76,6 +77,17 @@ public class FPSController : MonoBehaviour
     [SerializeField] private GameObject blood2;
     [SerializeField] private GameObject blood3;
     [SerializeField] private GameObject blood4;
+
+    [SerializeField] private float stepSpeed = 0.5f;
+    [SerializeField] private float crouchStepMulti = 1.5f;
+    [SerializeField] private float sprintStepMulti = 0.5f;
+    [SerializeField] private AudioSource footstepAudio = default;
+    [SerializeField] private AudioClip[] clips = default;
+    private float footstepTimer = 0;
+    private float GetOffset => isCrouching ? stepSpeed * crouchStepMulti : IsSprinting ? stepSpeed * sprintStepMulti : stepSpeed;
+    
+
+
     private bool IsSliding
     {
         get
@@ -176,13 +188,35 @@ public class FPSController : MonoBehaviour
             touching();
             Stamina();
             ScreenBlood();
+            HandleFoot();
         }
     }
     private void FixedUpdate()
     {
         collidedObjects.Clear();
     }
-    
+    private void HandleFoot()
+    {
+        if (!characterController.isGrounded) return;
+        if (cInput == Vector2.zero) return;
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer <= 0)
+        {
+            if (Physics.Raycast(cam.transform.position,Vector3.down,out RaycastHit hit, 5))
+            {
+                switch (hit.collider.tag)
+                {
+                    case "Normal":
+                        footstepAudio.PlayOneShot(clips[UnityEngine.Random.Range(0, clips.Length - 1)]);
+                        break;
+                    default:
+                        footstepAudio.PlayOneShot(clips[UnityEngine.Random.Range(0, clips.Length - 1)]);
+                        break;
+                }
+            }
+            footstepTimer = GetOffset;
+        }
+    }
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         collidedObjects.Add(hit.collider);
