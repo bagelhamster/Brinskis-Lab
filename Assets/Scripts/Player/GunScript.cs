@@ -53,7 +53,7 @@ public class GunScript : MonoBehaviour
         reloading = true;
 
         Invoke("ReloadDone", reloadTime);
-        Gun.PlayOneShot(reload[UnityEngine.Random.Range(0, clips.Length - 1)]);
+        Gun.PlayOneShot(reload[UnityEngine.Random.Range(0, reload.Length - 1)]);
 
     }
     private void ReloadDone()
@@ -72,9 +72,11 @@ public class GunScript : MonoBehaviour
 
         if (Physics.Raycast(cam.transform.position, direction, out rayHit, range))
         {
+            Target target = rayHit.transform.GetComponent<Target>();
+
             if (rayHit.collider.CompareTag("Enemy"))
             {
-                //Make the enemy take damage of some kind
+                target.TakeDamage(damage);
                 Debug.Log(rayHit.transform.name);
                //Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
 
