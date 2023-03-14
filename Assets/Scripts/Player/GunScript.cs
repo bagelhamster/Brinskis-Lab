@@ -31,12 +31,12 @@ public class GunScript : MonoBehaviour
     {
         MyInput();
         text.SetText(bulletsLeft/bulletsPerShot + " / " + magSize/bulletsPerShot);
-
+        Debug.Log(Input.GetJoystickNames().Length);
     }
     private void MyInput()
     {
-        if(allowButtonHold)shooting = Input.GetButton("Fire");
-        else shooting = Input.GetButtonDown("Fire");
+        if(allowButtonHold)shooting = Input.GetButton("Fire")|| Input.GetJoystickNames().Length > 0&& Input.GetAxisRaw("Fire")>0.20;
+        else shooting = Input.GetButtonDown("Fire") || Input.GetJoystickNames().Length > 0 && Input.GetAxisRaw("Fire") > 0.20;
 
         if (Input.GetButtonDown("Reload") && bulletsLeft < magSize && !reloading) Reload();
 

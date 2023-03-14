@@ -31,7 +31,7 @@ public class SelectGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButton("Slot1"))
+        if (Input.GetButton("Slot1")|| Input.GetAxis("DpadVert") < -0.75)
         {
             Gun1.gameObject.SetActive(true);
             Gun1Ammo.gameObject.SetActive(true);
@@ -44,7 +44,7 @@ public class SelectGun : MonoBehaviour
             Gun3Cross.gameObject.SetActive(false);
 
         }
-        if (Input.GetButton("Slot2"))
+        if (Input.GetButton("Slot2") || Input.GetAxis("DpadHori") < -0.75)
         {
             Gun1.gameObject.SetActive(false);
             Gun1Ammo.gameObject.SetActive(false);
@@ -56,7 +56,7 @@ public class SelectGun : MonoBehaviour
             Gun2Cross.gameObject.SetActive(true);
             Gun3Cross.gameObject.SetActive(false);
         }
-        if (Input.GetButton("Slot3"))
+        if (Input.GetButton("Slot3") || Input.GetAxis("DpadHori") > 0.75)
         {
             Gun1.gameObject.SetActive(false);
             Gun1Ammo.gameObject.SetActive(false);
@@ -69,5 +69,6 @@ public class SelectGun : MonoBehaviour
             Gun3Cross.gameObject.SetActive(true);
 
         }
+
     }
 }
