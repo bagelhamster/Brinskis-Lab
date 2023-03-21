@@ -67,7 +67,7 @@ public class GunScript : MonoBehaviour
         canShoot = false;
         float spreadx = Random.Range(-spread, spread);
         float spready = Random.Range(-spread, spread);
-        Vector3 direction = cam.transform.forward + new Vector3(spreadx, spready, 0);
+        Vector3 direction = cam.transform.forward + new Vector3(spreadx, spready, spreadx);
 
 
         if (Physics.Raycast(cam.transform.position, direction, out rayHit, range))
