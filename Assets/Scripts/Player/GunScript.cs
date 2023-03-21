@@ -31,7 +31,7 @@ public class GunScript : MonoBehaviour
     {
         MyInput();
         text.SetText(bulletsLeft/bulletsPerShot + " / " + magSize/bulletsPerShot);
-        Debug.Log(Input.GetJoystickNames().Length);
+        //Debug.Log(Input.GetJoystickNames().Length);
     }
     private void MyInput()
     {
@@ -77,14 +77,15 @@ public class GunScript : MonoBehaviour
             if (rayHit.collider.CompareTag("Enemy"))
             {
                 target.TakeDamage(damage);
-                Debug.Log(rayHit.transform.name);
+                //Debug.Log(rayHit.transform.name);
                //Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
 
             }
                     Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
-                    Gun.PlayOneShot(clips[UnityEngine.Random.Range(0, clips.Length - 1)]);
+                    
 
         }
+        Gun.PlayOneShot(clips[UnityEngine.Random.Range(0, clips.Length - 1)]);
         //Adds bullet holes if wanted not sure yet
         //Destroy(BulletHole,2f);
         Instantiate(muzzleFlash, attackPoint.position,attackPoint.rotation,attackPoint.parent);
