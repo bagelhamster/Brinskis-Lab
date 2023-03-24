@@ -239,15 +239,13 @@ public class FPSController : MonoBehaviour
     {
         currentHealth-=damage;
         OnDamage?.Invoke(currentHealth);
-         if (currentHealth <= 0)
-        {
-            Kill();
-        }else if (regenHealth!=null)
-        {
+         if (currentHealth <= 0)Kill();
+        else if (regenHealth!=null)
+        
             StopCoroutine(regenHealth);
 
             regenHealth = StartCoroutine(RegenHealth());
-        }
+        
     }
     private void Kill()
     {
@@ -262,7 +260,7 @@ public class FPSController : MonoBehaviour
         WaitForSeconds timetoWait = new WaitForSeconds(healthTimeIncre);
         while (currentHealth < maxHealth)
         {
-            currentHealth += healthTimeIncre;
+            currentHealth += healthIncre;
             if(currentHealth>maxHealth)
                 currentHealth=maxHealth;
             OnHeal?.Invoke(currentHealth);
