@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class Turret : MonoBehaviour
 {
@@ -18,7 +19,11 @@ public class Turret : MonoBehaviour
     public float range;
     [SerializeField]
     public float damage;
-    public LineRenderer lineRenderer;  
+    public LineRenderer lineRenderer;
+
+
+    [SerializeField] private AudioSource v8 = default;
+    [SerializeField] private AudioClip[] gunsounds = default;
     void Start()
     {
         oTime = FireRate;
@@ -82,7 +87,7 @@ public class Turret : MonoBehaviour
             Debug.DrawRay(gun.transform.position, gun.transform.forward, Color.green, 1);
             lineRenderer.SetPosition(0, gun.transform.position);
             lineRenderer.SetPosition(1, hitInfo.point);
-
+            v8.PlayOneShot(gunsounds[UnityEngine.Random.Range(0, gunsounds.Length - 1)]);
             if (hitInfo.collider.CompareTag("Player"))
                     {
                 FPSController.OnTakeDamage(damage);
