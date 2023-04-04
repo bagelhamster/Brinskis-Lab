@@ -85,7 +85,7 @@ public class FPSController : MonoBehaviour
     [SerializeField] private AudioClip[] clips = default;
     private float footstepTimer = 0;
     private float GetOffset => isCrouching ? stepSpeed * crouchStepMulti : IsSprinting ? stepSpeed * sprintStepMulti : stepSpeed;
-    
+    public GameObject button;
 
 
     private bool IsSliding
@@ -172,7 +172,8 @@ public class FPSController : MonoBehaviour
         defaulty = cam.transform.localPosition.y;
         currentHealth = maxHealth;
         currentStamina = maxStamina;
-
+        Time.timeScale = 1;
+        button.SetActive(false);
     }
 
     void Update()
@@ -253,6 +254,9 @@ public class FPSController : MonoBehaviour
         if (regenHealth != null)
             StopCoroutine(regenHealth);
         //Do things if dead
+        Time.timeScale = 0;
+        button.SetActive(true);
+        
     }
     private IEnumerator RegenHealth()
     {
