@@ -29,23 +29,26 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private AudioSource enemy = default;
     [SerializeField] private AudioClip[] gunsounds = default;
 
-
+    private Vector3 positionish;
     private void Update()
     {
         inSight = Physics.CheckSphere(transform.position, sightRange, IsPlayer);
         inAttack = Physics.CheckSphere(transform.position, attackRange, IsPlayer);
-
+        InvokeRepeating("posit", 0, 1);
         if (!inSight && !inAttack) Patrol();
         if(inSight&&!inAttack)Chase();
         if(inAttack&&inSight) Attack();
-
+        if (agent.transform.position == positionish)pointSet=false;
     }
     private void Awake()
     {
         player=GameObject.Find("Player").transform;
         agent=GetComponent<NavMeshAgent>();
     }
-
+    private void posit()
+    {
+        positionish = agent.transform.position;
+    }
     private void Patrol()
     {
         if (!pointSet) GetWalkPoint();
