@@ -230,10 +230,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   walkPoint: {x: 0, y: 0, z: 0}
-  pointRange: 15
+  pointRange: 20
   fireRate: 1
-  sightRange: 15
-  attackRange: 7
+  sightRange: 20
+  attackRange: 12
   inSight: 0
   inAttack: 0
   damage: 9
