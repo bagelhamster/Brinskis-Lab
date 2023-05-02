@@ -93,7 +93,7 @@ public class EnemyAI : MonoBehaviour
         {
             lineRenderer.SetPosition(0, gun.transform.position);
             lineRenderer.SetPosition(1, hitInfo.point);
-            enemy.PlayOneShot(gunsounds[UnityEngine.Random.Range(0, gunsounds.Length - 1)]);
+            enemy.PlayOneShot(gunsounds[Random.Range(0, gunsounds.Length - 1)]);
 
             if (hitInfo.collider.CompareTag("Player"))
             {
