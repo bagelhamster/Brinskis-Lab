@@ -23,6 +23,9 @@ public class EnemyBossAI : MonoBehaviour
 
     [SerializeField]
     public float damage;
+
+    [SerializeField]
+    public float lightninDamage;
     public LineRenderer lineRenderer;
     public GameObject gun;
 
@@ -112,12 +115,39 @@ public class EnemyBossAI : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         lineRenderer.enabled = false;
     }
+
+    IEnumerator lightnin()
+    {
+        Vector3 lightningcast=new Vector3(player.position.x,10, player.position.z);
+
+        yield return new WaitForSeconds(0.5f);
+        lineRenderer.enabled = true;
+
+        Ray ray = new Ray(lightningcast, -Vector3.up);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, attackRange))
+        {
+            lineRenderer.SetColors(Color.yellow, Color.yellow);
+            lineRenderer.SetPosition(0, lightningcast);
+            lineRenderer.SetPosition(1, hitInfo.point);
+            enemy.PlayOneShot(gunsounds[Random.Range(0, gunsounds.Length - 1)]);
+            Debug.DrawLine(lightningcast, hitInfo.point, Color.cyan);
+            if (hitInfo.collider.CompareTag("Player"))
+            {
+                FPSController.OnTakeDamage(lightninDamage);
+           
+            }
+            yield return new WaitForSeconds(0.2f);
+            lineRenderer.enabled = false;
+        }
+    }
+
     private void ShootPlayer()
     {
         lineRenderer.enabled = true;
         Ray ray = new Ray(gun.transform.position, gun.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hitInfo, attackRange))
         {
+            lineRenderer.SetColors(Color.red,Color.red);
             lineRenderer.SetPosition(0, gun.transform.position);
             lineRenderer.SetPosition(1, hitInfo.point);
             enemy.PlayOneShot(gunsounds[Random.Range(0, gunsounds.Length - 1)]);
@@ -140,7 +170,8 @@ public class EnemyBossAI : MonoBehaviour
     }
     private void Lightning()
     {
-
+        StartCoroutine(lightnin());
+        //StartCoroutine(Linego());
     }
     private void ResetAttack()
     {

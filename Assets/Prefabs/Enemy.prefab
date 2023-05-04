@@ -367,6 +367,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+  music:
+  - {fileID: 8300000, guid: d15583bfad3b3f54cb2e1baeec0322c9, type: 3}
+  - {fileID: 8300000, guid: 8d321a0b60a978f42970ea8c74025ea8, type: 3}
+  Player: {fileID: 8282652254507030331}
 --- !u!82 &8282652254507030331
 AudioSource:
   m_ObjectHideFlags: 0
