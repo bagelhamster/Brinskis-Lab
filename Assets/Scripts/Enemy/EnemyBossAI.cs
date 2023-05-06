@@ -81,28 +81,17 @@ public class EnemyBossAI : MonoBehaviour
         if (!alreadyAtacked)
         {
             
-            int randomAttack=Random.Range(1, 4);
-            if (randomAttack == 1)
-            {
-                ShootPlayer();
-                alreadyAtacked = true;
-                Invoke(nameof(ResetAttack), fireRate);
-            }
-            if (randomAttack == 2)
+            int randomAttack=Random.Range(1, 100);
+
+            if (randomAttack <= 50)
             {
                 ThrowRock();
                 alreadyAtacked = true;
                 Invoke(nameof(ResetAttack), fireRate);
             }
-            if (randomAttack == 3)
+            if (randomAttack <= 100 && randomAttack > 50)
             {
                 Lightning();
-                alreadyAtacked = true;
-                Invoke(nameof(ResetAttack), fireRate);
-            }
-            if (randomAttack == 4)
-            {
-                ThrowRock();
                 alreadyAtacked = true;
                 Invoke(nameof(ResetAttack), fireRate);
             }
@@ -118,20 +107,20 @@ public class EnemyBossAI : MonoBehaviour
 
     IEnumerator lightnin()
     {
-        Vector3 lightningcast=new Vector3(player.position.x,10, player.position.z);
+        Vector3 lightningcast=new Vector3(player.position.x,50, player.position.z);
 
         yield return new WaitForSeconds(0.5f);
         lineRenderer.enabled = true;
 
-        Ray ray = new Ray(lightningcast, -Vector3.up);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, attackRange))
+        Ray rayc = new Ray(lightningcast, -Vector3.up);
+        if (Physics.Raycast(rayc, out RaycastHit hitcInfo, attackRange))
         {
             lineRenderer.SetColors(Color.yellow, Color.yellow);
             lineRenderer.SetPosition(0, lightningcast);
-            lineRenderer.SetPosition(1, hitInfo.point);
+            lineRenderer.SetPosition(1, hitcInfo.point);
             enemy.PlayOneShot(gunsounds[Random.Range(0, gunsounds.Length - 1)]);
-            Debug.DrawLine(lightningcast, hitInfo.point, Color.cyan);
-            if (hitInfo.collider.CompareTag("Player"))
+            Debug.DrawLine(lightningcast, hitcInfo.point, Color.cyan);
+            if (hitcInfo.collider.CompareTag("Player"))
             {
                 FPSController.OnTakeDamage(lightninDamage);
            
@@ -141,7 +130,7 @@ public class EnemyBossAI : MonoBehaviour
         }
     }
 
-    private void ShootPlayer()
+    /*private void ShootPlayer()
     {
         lineRenderer.enabled = true;
         Ray ray = new Ray(gun.transform.position, gun.transform.forward);
@@ -162,7 +151,7 @@ public class EnemyBossAI : MonoBehaviour
 
 
 
-    }
+    }*/
     private void ThrowRock()
     {
         GameObject shotInstance = Instantiate(boulder,gun.transform.position, gun.transform.rotation);
