@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GunScript : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class GunScript : MonoBehaviour
     [SerializeField] private AudioSource Gun = default;
     [SerializeField] private AudioClip[] clips = default;
     [SerializeField] private AudioClip[] reload = default;
+
     private void Awake()
     {
         bulletsLeft=magSize;
@@ -72,13 +74,14 @@ public class GunScript : MonoBehaviour
 
         if (Physics.Raycast(cam.transform.position, direction, out rayHit, range))
         {
-            Target target = rayHit.transform.GetComponent<Target>();
+            EnemyTarget target = rayHit.transform.GetComponent<EnemyTarget>();
 
             if (rayHit.collider.CompareTag("Enemy"))
             {
                 target.TakeDamage(damage);
                 //Debug.Log(rayHit.transform.name);
-               //Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
+                //Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
+
 
             }
                     Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));

@@ -6,6 +6,7 @@ public class WallSpawn : MonoBehaviour
 {
     public GameObject Self;
     public GameObject Boss;
+    public GameObject HealthBar;
     void Start()
     {
         
@@ -15,6 +16,7 @@ public class WallSpawn : MonoBehaviour
     {
         if(Boss == null)
         {
+            HealthBar.SetActive(false);
             Self.SetActive(false);
         }
     }

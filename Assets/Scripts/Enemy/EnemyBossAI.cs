@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyBossAI : MonoBehaviour
 {
@@ -38,9 +39,9 @@ public class EnemyBossAI : MonoBehaviour
     public GameObject arrow;
     public float speed = 100f;
     public float arrowSpeed = 200f;
-    //[SerializeField] private Image HealthBar;
 
-
+    [SerializeField] private Image HealthBar;
+    public EnemyTarget target;
     private void Update()
     {
         inSight = Physics.CheckSphere(transform.position, sightRange, IsPlayer);
@@ -52,7 +53,7 @@ public class EnemyBossAI : MonoBehaviour
         if (agent.transform.position == positionish)pointSet=false;
 
 
-
+        HealthBar.fillAmount = target.health / 3000;
     }
     private void Awake()
     {
