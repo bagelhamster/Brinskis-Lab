@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Enemy
+  - Enemy/Boss
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Enemy
   - Player
   - Weapons
-  - 
+  - Boss
   - 
   - 
   - 

@@ -11,4 +11,13 @@ public class Boulder : MonoBehaviour
             FPSController.OnTakeDamage(50);
         }
     }
+    void Start()
+    {
+        StartCoroutine(DestroyBoulder());
+    }
+    IEnumerator DestroyBoulder()
+    {
+        yield return new WaitForSeconds(5);
+        Destroy(gameObject);
+    }
 }

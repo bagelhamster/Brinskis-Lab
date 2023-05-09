@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
+using UnityEngine.UI;
 
 public class EnemyBossAI : MonoBehaviour
 {
@@ -20,7 +21,6 @@ public class EnemyBossAI : MonoBehaviour
     public float sightRange, attackRange;
     public bool inSight, inAttack;
 
-
     [SerializeField]
     public float damage;
 
@@ -35,7 +35,12 @@ public class EnemyBossAI : MonoBehaviour
     private Vector3 positionish;
 
     public GameObject boulder;
+    public GameObject arrow;
     public float speed = 100f;
+    public float arrowSpeed = 200f;
+    //[SerializeField] private Image HealthBar;
+
+
     private void Update()
     {
         inSight = Physics.CheckSphere(transform.position, sightRange, IsPlayer);
@@ -45,6 +50,9 @@ public class EnemyBossAI : MonoBehaviour
         if(inSight&&!inAttack)Chase();
         if(inAttack&&inSight) Attack();
         if (agent.transform.position == positionish)pointSet=false;
+
+
+
     }
     private void Awake()
     {
@@ -83,18 +91,25 @@ public class EnemyBossAI : MonoBehaviour
             
             int randomAttack=Random.Range(1, 100);
 
-            if (randomAttack <= 50)
+            if (randomAttack <= 33)
             {
                 ThrowRock();
                 alreadyAtacked = true;
                 Invoke(nameof(ResetAttack), fireRate);
             }
-            if (randomAttack <= 100 && randomAttack > 50)
+            if (randomAttack <= 66 && randomAttack > 33)
             {
                 Lightning();
                 alreadyAtacked = true;
                 Invoke(nameof(ResetAttack), fireRate);
             }
+            if (randomAttack <= 100 && randomAttack > 66)
+            {
+                ShootArrow();
+                alreadyAtacked = true;
+                Invoke(nameof(ResetAttack), fireRate);
+            }
+
             Debug.Log(randomAttack);
         }
     }
@@ -157,10 +172,15 @@ public class EnemyBossAI : MonoBehaviour
         GameObject shotInstance = Instantiate(boulder,gun.transform.position, gun.transform.rotation);
         shotInstance.GetComponent<Rigidbody>().AddForce(gun.transform.forward * speed);
     }
+    private void ShootArrow()
+    {
+        GameObject shotInstance = Instantiate(arrow, gun.transform.position, gun.transform.rotation);
+        shotInstance.GetComponent<Rigidbody>().AddForce(gun.transform.forward * arrowSpeed);
+    }
     private void Lightning()
     {
         StartCoroutine(lightnin());
-        //StartCoroutine(Linego());
+        StartCoroutine(Linego());
     }
     private void ResetAttack()
     {
