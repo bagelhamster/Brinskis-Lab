@@ -87,7 +87,8 @@ public class FPSController : MonoBehaviour
     private float GetOffset => isCrouching ? stepSpeed * crouchStepMulti : IsSprinting ? stepSpeed * sprintStepMulti : stepSpeed;
     public GameObject button;
 
-
+    public GameObject dead;
+    public GameObject win;
     private bool IsSliding
     {
         get
@@ -174,6 +175,8 @@ public class FPSController : MonoBehaviour
         currentStamina = maxStamina;
         Time.timeScale = 1;
         button.SetActive(false);
+        dead.SetActive(false);
+        win.SetActive(false);
     }
 
     void Update()
@@ -256,8 +259,10 @@ public class FPSController : MonoBehaviour
         //Do things if dead
         Time.timeScale = 0;
         button.SetActive(true);
-        
-    }
+        dead.SetActive(true);
+            win.SetActive(false);
+
+}
     private IEnumerator RegenHealth()
     {
         yield return new WaitForSeconds(timeBeforeRegen);
