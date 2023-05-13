@@ -7,7 +7,6 @@ public class EndGame : MonoBehaviour
     public GameObject menu;
     public GameObject dead;
     public GameObject win;
-
     void Start()
     {
         menu.SetActive(false);

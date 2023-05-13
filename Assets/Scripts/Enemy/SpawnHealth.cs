@@ -6,9 +6,12 @@ public class SpawnHealth : MonoBehaviour
 {
     public GameObject HealthBar;
     int inter = 0;
+    public GameObject boss;
     private void Start()
     {
         HealthBar.SetActive(false);
+        boss.GetComponent<EnemyBossAI>().enabled = false;
+
 
     }
     private void OnTriggerEnter(Collider other)
@@ -16,6 +19,7 @@ public class SpawnHealth : MonoBehaviour
         if (inter == 0&&other.CompareTag("Player"))
         {
             HealthBar.SetActive(true);
+            boss.GetComponent<EnemyBossAI>().enabled = true;
             inter++;
         }
     }
